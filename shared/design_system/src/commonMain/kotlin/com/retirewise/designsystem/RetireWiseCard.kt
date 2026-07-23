@@ -23,6 +23,12 @@ object RetireWiseCardDefaults {
 }
 
 /**
+ * Whether a card should be rendered as a single tappable action, independent
+ * of Compose runtime so it can be unit tested directly.
+ */
+fun retireWiseCardIsInteractive(onClick: (() -> Unit)?): Boolean = onClick != null
+
+/**
  * A container surface for grouped content (goal tiles, insight cards,
  * scenario summaries, etc). Pass [onClick] only when the whole card is a
  * single tappable action; otherwise place interactive elements inside
@@ -36,8 +42,8 @@ fun RetireWiseCard(
 ) {
     val colors = RetireWiseTheme.colors
     val cardModifier =
-        if (onClick != null) {
-            modifier.clickable(onClick = onClick)
+        if (retireWiseCardIsInteractive(onClick)) {
+            modifier.clickable(onClick = onClick ?: {})
         } else {
             modifier
         }
