@@ -1,5 +1,6 @@
 package com.retirewise.navigation
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +26,7 @@ fun WelcomeScreen(
     onStartPlanClick: () -> Unit,
     onAskQuestionClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onViewDesignSystemClick: (() -> Unit)? = null,
 ) {
     val content = koinInject<WelcomeContentProvider>().content()
     val colors = RetireWiseTheme.colors
@@ -99,5 +101,16 @@ fun WelcomeScreen(
             variant = RetireWiseButtonVariant.Secondary,
             modifier = Modifier.fillMaxWidth(),
         )
+
+        if (onViewDesignSystemClick != null) {
+            Spacer(modifier = Modifier.padding(top = RetireWiseTheme.spacing.md))
+
+            Text(
+                text = "Design system",
+                style = typography.labelSmall,
+                color = colors.textSecondary,
+                modifier = Modifier.clickable(onClick = onViewDesignSystemClick),
+            )
+        }
     }
 }

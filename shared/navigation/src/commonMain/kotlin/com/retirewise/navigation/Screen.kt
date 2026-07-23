@@ -13,4 +13,13 @@ sealed interface Screen {
     data object StartPlanPlaceholder : Screen
 
     data object AskQuestionPlaceholder : Screen
+
+    /**
+     * Phase 1 exit criteria: a screen exercising every shared/design_system
+     * component, reachable from Welcome. This is scaffolding for design
+     * system verification, not a real product screen — it should be
+     * removed or moved behind a proper debug menu once Phase 2's
+     * navigation shell exists.
+     */
+    data object DesignSystemShowcase : Screen
 }

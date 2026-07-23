@@ -33,6 +33,7 @@ fun App() {
                     WelcomeScreen(
                         onStartPlanClick = { currentScreen = Screen.StartPlanPlaceholder },
                         onAskQuestionClick = { currentScreen = Screen.AskQuestionPlaceholder },
+                        onViewDesignSystemClick = { currentScreen = Screen.DesignSystemShowcase },
                     )
                 is Screen.StartPlanPlaceholder ->
                     PlaceholderScreen(
@@ -42,6 +43,10 @@ fun App() {
                 is Screen.AskQuestionPlaceholder ->
                     PlaceholderScreen(
                         message = "Ask a question is coming soon.",
+                        onBackClick = { currentScreen = Screen.Welcome },
+                    )
+                is Screen.DesignSystemShowcase ->
+                    DesignSystemShowcaseScreen(
                         onBackClick = { currentScreen = Screen.Welcome },
                     )
             }
