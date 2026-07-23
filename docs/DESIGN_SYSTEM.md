@@ -73,3 +73,7 @@ Do not display long walls of text. Break responses into: direct answer, why, wha
 ## Phase 0 status
 
 Semantic colour tokens, a typography scale (display, headline, body, label, and financial-figure text styles using the platform default font family), and spacing tokens exist so far (`shared/design_system`), consumed by a single welcome screen. The full showcase screen, chart components, and AI conversation components are Phase 1+ work per `RELEASE_PLAN.md`.
+
+## Phase 1 status
+
+`RetireWiseButton` (Primary/Secondary variants, pill shape, accessible content descriptions, variant→style mapping unit tested independently of Compose) and `RetireWiseCard` (moderate-radius bordered surface container, optional whole-card `onClick`) exist in `shared/design_system` and are consumed by the welcome screen. Remaining Phase 1 components (input fields, selection controls, progress components, accessible chart container, loading/error components) and the design system showcase screen are still to do.
