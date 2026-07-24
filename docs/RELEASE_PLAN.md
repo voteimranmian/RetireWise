@@ -33,6 +33,8 @@ Claude Code builds the application in this order, in small testable vertical sli
 
 **Exit criteria:** A design system showcase screen runs on iOS and Android.
 
+Design system v2 visual refresh (finalized colour tokens, Inter typeface, Material icons, soft-depth cards) applied after Phase 2 — see `docs/DESIGN_SYSTEM.md` "Design system v2 status" and ADR 0005.
+
 ## Phase 2: Application shell — COMPLETE
 
 1. Create navigation

@@ -17,12 +17,13 @@ import androidx.compose.runtime.CompositionLocalProvider
 @Composable
 fun RetireWiseTheme(content: @Composable () -> Unit) {
     val colors = LightRetireWiseColors
-    val typography = LightRetireWiseTypography
+    val typography = rememberRetireWiseTypography()
 
     val materialColorScheme =
         lightColorScheme(
             primary = colors.primary,
             secondary = colors.secondary,
+            tertiary = colors.tertiary,
             background = colors.background,
             surface = colors.surface,
             error = colors.critical,

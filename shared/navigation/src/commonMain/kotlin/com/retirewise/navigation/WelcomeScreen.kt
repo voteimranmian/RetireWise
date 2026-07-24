@@ -3,19 +3,26 @@ package com.retirewise.navigation
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.VerifiedUser
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.retirewise.designsystem.RetireWiseButton
 import com.retirewise.designsystem.RetireWiseButtonVariant
 import com.retirewise.designsystem.RetireWiseTheme
@@ -42,19 +49,29 @@ fun WelcomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Surface(
-            color = colors.primaryContainer,
-            contentColor = colors.primary,
+            color = colors.primaryFixed,
+            contentColor = colors.onPrimaryFixed,
             shape = RoundedCornerShape(percent = 50),
         ) {
-            Text(
-                text = content.badgeLabel,
-                style = typography.labelSmall,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(RetireWiseTheme.spacing.xs),
                 modifier =
                     Modifier.padding(
                         horizontal = RetireWiseTheme.spacing.md,
                         vertical = RetireWiseTheme.spacing.xs,
                     ),
-            )
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.VerifiedUser,
+                    contentDescription = null,
+                    modifier = Modifier.size(14.dp),
+                )
+                Text(
+                    text = content.badgeLabel,
+                    style = typography.labelSmall,
+                )
+            }
         }
 
         Spacer(modifier = Modifier.padding(top = RetireWiseTheme.spacing.md))
@@ -91,6 +108,7 @@ fun WelcomeScreen(
             onClick = onStartPlanClick,
             variant = RetireWiseButtonVariant.Primary,
             modifier = Modifier.fillMaxWidth(),
+            trailingIcon = Icons.Filled.ArrowForward,
         )
 
         Spacer(modifier = Modifier.padding(top = RetireWiseTheme.spacing.sm))

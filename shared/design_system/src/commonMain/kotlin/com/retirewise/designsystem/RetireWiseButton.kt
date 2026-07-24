@@ -1,16 +1,23 @@
 package com.retirewise.designsystem
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -57,12 +64,20 @@ object RetireWiseButtonDefaults {
     val shape: Shape = androidx.compose.foundation.shape.RoundedCornerShape(percent = 50)
     val contentPadding =
         PaddingValues(horizontal = RetireWiseSpacing.xl, vertical = RetireWiseSpacing.md)
+    val iconSize = 18.dp
 }
+
+/**
+ * Whether a button should show a trailing icon, independent of Compose
+ * runtime so it can be unit tested directly.
+ */
+fun retireWiseButtonShowsTrailingIcon(trailingIcon: ImageVector?): Boolean = trailingIcon != null
 
 /**
  * Primary interactive action per docs/DESIGN_SYSTEM.md. Callers must supply
  * [contentDescription] whenever [label] alone would not be clear to a
- * screen reader (see CLAUDE.md rule 16).
+ * screen reader (see CLAUDE.md rule 16). [trailingIcon] is decorative only —
+ * the button's own [contentDescription] already conveys its purpose.
  */
 @Composable
 fun RetireWiseButton(
@@ -72,10 +87,28 @@ fun RetireWiseButton(
     variant: RetireWiseButtonVariant = RetireWiseButtonVariant.Primary,
     enabled: Boolean = true,
     contentDescription: String = label,
+    trailingIcon: ImageVector? = null,
 ) {
     val style = retireWiseButtonStyle(variant, RetireWiseTheme.colors)
     val labelStyle = RetireWiseTheme.typography.labelLarge
     val buttonModifier = modifier.semantics { this.contentDescription = contentDescription }
+    val showsTrailingIcon = retireWiseButtonShowsTrailingIcon(trailingIcon)
+
+    val buttonContent: @Composable RowScope.() -> Unit = {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(RetireWiseTheme.spacing.xs),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(label, style = labelStyle)
+            if (showsTrailingIcon && trailingIcon != null) {
+                Icon(
+                    imageVector = trailingIcon,
+                    contentDescription = null,
+                    modifier = Modifier.size(RetireWiseButtonDefaults.iconSize),
+                )
+            }
+        }
+    }
 
     if (style.borderColor != null) {
         OutlinedButton(
@@ -86,9 +119,8 @@ fun RetireWiseButton(
             colors = ButtonDefaults.outlinedButtonColors(contentColor = style.contentColor),
             contentPadding = RetireWiseButtonDefaults.contentPadding,
             modifier = buttonModifier,
-        ) {
-            Text(label, style = labelStyle)
-        }
+            content = buttonContent,
+        )
     } else {
         Button(
             onClick = onClick,
@@ -101,8 +133,7 @@ fun RetireWiseButton(
                 ),
             contentPadding = RetireWiseButtonDefaults.contentPadding,
             modifier = buttonModifier,
-        ) {
-            Text(label, style = labelStyle)
-        }
+            content = buttonContent,
+        )
     }
 }

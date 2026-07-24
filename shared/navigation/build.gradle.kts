@@ -35,6 +35,11 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.ui)
+            // Same icon set as shared/design_system (see
+            // docs/ADR/0005-design-system-v2-tokens-typeface-icons.md) — the
+            // screens in this module reference Icons.Filled.* directly.
+            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
+            implementation(compose.materialIconsExtended)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.androidx.navigation.compose)
