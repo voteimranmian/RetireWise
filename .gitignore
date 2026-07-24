@@ -45,3 +45,8 @@ apps/iosApp/**/Frameworks/
 
 # Logs
 *.log
+
+# AWS CDK (infra/)
+infra/cdk.out/
+infra/.cdk.staging/
+node_modules/

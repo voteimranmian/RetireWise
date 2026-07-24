@@ -1,0 +1,13 @@
+# Keep the Docker build context small — only Gradle wrapper, source, and
+# build config are needed inside the image build stage.
+.git/
+.gradle/
+.kotlin/
+build/
+**/build/
+apps/iosApp/
+infra/cdk.out/
+infra/.cdk.staging/
+node_modules/
+*.md
+docs/

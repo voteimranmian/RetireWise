@@ -1,0 +1,10 @@
+{
+  "app": "../gradlew -q :infra:run --console=plain",
+  "watch": {
+    "include": ["src/**"],
+    "exclude": ["cdk.out/**", "build/**"]
+  },
+  "context": {
+    "@aws-cdk/core:newStyleStackSynthesis": true
+  }
+}

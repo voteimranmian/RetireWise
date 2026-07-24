@@ -36,6 +36,8 @@ Firebase may be used for authentication, notifications, crash reporting, and sel
 Do not store the authoritative financial rules only in a client database. Do not call AI providers directly from the mobile client.
 
 > Phase 0 note: no backend service exists yet. It is introduced starting Phase 3 (authentication) and Phase 8 (AI advisor) per `RELEASE_PLAN.md`.
+>
+> Phase 3 infrastructure note: `ca-central-1` (Montreal) was chosen as the Canadian AWS region. See `docs/ADR/0004-aws-cdk-ecs-fargate-dev-infrastructure.md` for the AWS CDK / ECS Fargate / dev-only-environment decision and its cost/risk tradeoffs.
 
 ### 14.3 High level architecture
 
@@ -73,6 +75,8 @@ RetireWise
 apps
   androidApp
   iosApp
+
+infra
 
 shared
   core
@@ -136,9 +140,9 @@ scripts
   verify
 ```
 
-> Phase 0 status: `apps/androidApp`, `apps/iosApp`, `shared/core`, `shared/design_system`, `shared/navigation`, and `shared/authentication` are real Gradle modules with working code. Every other `shared/*` module and all of `backend/*` exist only as placeholder directories with a README describing their purpose and the phase in which they will be implemented (see `RELEASE_PLAN.md`). They are intentionally not wired into `settings.gradle.kts` until a phase actually needs them, to avoid empty modules inflating build time and Gradle configuration for no benefit.
+> Phase 0 status: `apps/androidApp`, `apps/iosApp`, `shared/core`, `shared/design_system`, `shared/navigation`, `shared/authentication`, `infra`, and `backend/authentication` are real Gradle modules with working code. Every other `shared/*` module and the rest of `backend/*` exist only as placeholder directories with a README describing their purpose and the phase in which they will be implemented (see `RELEASE_PLAN.md`). They are intentionally not wired into `settings.gradle.kts` until a phase actually needs them, to avoid empty modules inflating build time and Gradle configuration for no benefit.
 >
-> Phase 3 status: `shared/authentication` currently ships a client-side scaffold only — real `domain`/`data`/`presentation`/`di` layers exist, but sign-in is backed by `NotConfiguredAuthRepository` (every provider reports `AuthResult.NotConfigured`; there is no backend account service or real Apple/Google/Firebase OAuth integration yet) and consent is backed by `InMemoryConsentRepository` (state is not persisted across app restarts). See `RELEASE_PLAN.md` Phase 3 for what is and isn't done.
+> Phase 3 status: `shared/authentication` currently ships a client-side scaffold only — real `domain`/`data`/`presentation`/`di` layers exist, but sign-in is backed by `NotConfiguredAuthRepository` (every provider reports `AuthResult.NotConfigured`; there is no backend account service or real Apple/Google/Firebase OAuth integration yet) and consent is backed by `InMemoryConsentRepository` (state is not persisted across app restarts). `infra` (AWS CDK, Kotlin) defines a dev-only AWS environment — VPC, ECR, ECS Fargate, RDS PostgreSQL — and `backend/authentication` is a Ktor skeleton exposing only `GET /health`, meant to prove that pipeline deploys correctly before real sign-in/session endpoints are built. See `RELEASE_PLAN.md` Phase 3 and `docs/ADR/0004-aws-cdk-ecs-fargate-dev-infrastructure.md` for what is and isn't done.
 
 ## 15. Module Architecture
 
