@@ -12,12 +12,12 @@
 6. SQLDelight for structured local data
 7. Multiplatform Settings for simple preferences
 8. Koin for dependency injection
-9. Voyager (or an approved Compose Multiplatform navigation solution)
+9. Navigation Compose Multiplatform (`org.jetbrains.androidx.navigation:navigation-compose`) — see ADR 0003
 10. Kotlin test for shared unit tests
 
 Use native implementations through `expect`/`actual` declarations where required.
 
-> Phase 0 note: Ktor, SQLDelight, and Multiplatform Settings are declared in the version catalogue but only added to a module's dependencies when that module first needs them (e.g. SQLDelight lands with the profile/persistence work, Ktor lands with the backend API client). Koin and Voyager are wired in Phase 0 because dependency injection and navigation are explicit Phase 0 exit criteria.
+> Phase 0 note: Ktor, SQLDelight, and Multiplatform Settings are declared in the version catalogue but only added to a module's dependencies when that module first needs them (e.g. SQLDelight lands with the profile/persistence work, Ktor lands with the backend API client). Koin is wired in Phase 0 because dependency injection is an explicit Phase 0 exit criteria. Navigation Compose Multiplatform is wired in Phase 2, once the five primary destinations that need real navigation exist (see ADR 0003) — Phase 0/1 used a minimal hand-written `Screen` sealed interface instead.
 
 ### 14.2 Backend technology
 

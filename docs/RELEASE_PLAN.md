@@ -2,7 +2,7 @@
 
 Claude Code builds the application in this order, in small testable vertical slices. Do not skip ahead. Each phase must meet its exit criteria before the next phase begins.
 
-## Phase 0: Foundation — IN PROGRESS
+## Phase 0: Foundation — COMPLETE
 
 1. Create repository
 2. Create Kotlin Multiplatform project
@@ -17,7 +17,7 @@ Claude Code builds the application in this order, in small testable vertical sli
 
 **Exit criteria:** Both platform applications display the same basic screen and pass the build pipeline.
 
-## Phase 1: Design system
+## Phase 1: Design system — COMPLETE
 
 1. Create semantic colour tokens
 2. Create typography
@@ -33,7 +33,7 @@ Claude Code builds the application in this order, in small testable vertical sli
 
 **Exit criteria:** A design system showcase screen runs on iOS and Android.
 
-## Phase 2: Application shell
+## Phase 2: Application shell — COMPLETE
 
 1. Create navigation
 2. Create Today screen
@@ -43,7 +43,7 @@ Claude Code builds the application in this order, in small testable vertical sli
 6. Create Ask AI screen
 7. Add platform adaptive behaviour
 
-**Exit criteria:** All main destinations work on both platforms.
+**Exit criteria:** All main destinations work on both platforms. See `docs/DESIGN_SYSTEM.md` "Phase 2 status" and ADR 0003 for details.
 
 ## Phase 3: Authentication and consent
 

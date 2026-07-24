@@ -36,6 +36,8 @@ kotlin {
             implementation(compose.ui)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
+            implementation(libs.androidx.navigation.compose)
+            implementation(libs.compose.ui.backhandler)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
