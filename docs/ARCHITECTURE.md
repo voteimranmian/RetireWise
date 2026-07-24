@@ -136,7 +136,9 @@ scripts
   verify
 ```
 
-> Phase 0 status: `apps/androidApp`, `apps/iosApp`, `shared/core`, `shared/design_system`, and `shared/navigation` are real Gradle modules with working code. Every other `shared/*` module and all of `backend/*` exist only as placeholder directories with a README describing their purpose and the phase in which they will be implemented (see `RELEASE_PLAN.md`). They are intentionally not wired into `settings.gradle.kts` until a phase actually needs them, to avoid empty modules inflating build time and Gradle configuration for no benefit.
+> Phase 0 status: `apps/androidApp`, `apps/iosApp`, `shared/core`, `shared/design_system`, `shared/navigation`, and `shared/authentication` are real Gradle modules with working code. Every other `shared/*` module and all of `backend/*` exist only as placeholder directories with a README describing their purpose and the phase in which they will be implemented (see `RELEASE_PLAN.md`). They are intentionally not wired into `settings.gradle.kts` until a phase actually needs them, to avoid empty modules inflating build time and Gradle configuration for no benefit.
+>
+> Phase 3 status: `shared/authentication` currently ships a client-side scaffold only — real `domain`/`data`/`presentation`/`di` layers exist, but sign-in is backed by `NotConfiguredAuthRepository` (every provider reports `AuthResult.NotConfigured`; there is no backend account service or real Apple/Google/Firebase OAuth integration yet) and consent is backed by `InMemoryConsentRepository` (state is not persisted across app restarts). See `RELEASE_PLAN.md` Phase 3 for what is and isn't done.
 
 ## 15. Module Architecture
 

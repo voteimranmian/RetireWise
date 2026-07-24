@@ -45,17 +45,19 @@ Claude Code builds the application in this order, in small testable vertical sli
 
 **Exit criteria:** All main destinations work on both platforms. See `docs/DESIGN_SYSTEM.md` "Phase 2 status" and ADR 0003 for details.
 
-## Phase 3: Authentication and consent
+## Phase 3: Authentication and consent — IN PROGRESS
 
-1. Create account flow
-2. Add Sign in with Apple
-3. Add Google sign in
-4. Add email sign in
-5. Add session management
-6. Add biometric lock
-7. Add privacy consent
-8. Add AI data consent
-9. Add account deletion
+1. Create account flow — DONE (client-side scaffold; see below)
+2. Add Sign in with Apple — BLOCKED (needs real Apple OAuth credentials/backend)
+3. Add Google sign in — BLOCKED (needs real Google OAuth credentials/backend)
+4. Add email sign in — BLOCKED (needs a backend account service)
+5. Add session management — BLOCKED (needs a backend account service)
+6. Add biometric lock — NOT STARTED
+7. Add privacy consent — DONE (client-side scaffold; see below)
+8. Add AI data consent — DONE (client-side scaffold; see below)
+9. Add account deletion — BLOCKED (needs a backend account service)
+
+**Client-side scaffold (2026-07-23):** The `shared/authentication` module now has real `domain`/`data`/`presentation`/`di` layers (docs/ARCHITECTURE.md section 15) wired into the app's top-level navigation: Welcome → Create Account → Privacy Consent → AI Consent → Main App. Sign-in buttons (Apple/Google/Email) call `NotConfiguredAuthRepository`, which honestly reports `AuthResult.NotConfigured` for every provider rather than faking success, since no backend account service or real OAuth credentials exist yet. A "Skip for now (preview build)" link lets the flow be exercised end to end during development. Consent is recorded via `InMemoryConsentRepository`, which holds state only in memory (not persisted across app restarts). Items 2-6 and 9 above remain blocked or not started pending real backend infrastructure and OAuth credentials, which cannot be provisioned inside this environment.
 
 **Exit criteria:** A user can securely create, access, lock, export, and delete an account.
 

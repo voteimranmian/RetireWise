@@ -10,8 +10,22 @@ sealed interface Screen {
     data object Welcome : Screen
 
     /**
-     * The Phase 2 application shell (docs/RELEASE_PLAN.md), reached from
-     * either of Welcome's two entry actions with a different starting tab.
+     * Phase 3 account creation (docs/RELEASE_PLAN.md), reached from either of
+     * Welcome's two entry actions. [startDestination] is threaded through the
+     * whole Create Account → Privacy Consent → AI Consent flow so the
+     * originally requested tab is honoured once [MainApp] is finally reached.
+     */
+    data class CreateAccount(val startDestination: Destination) : Screen
+
+    /** Required privacy consent, reached after [CreateAccount]. */
+    data class PrivacyConsent(val startDestination: Destination) : Screen
+
+    /** Optional AI data consent, reached after [PrivacyConsent]. */
+    data class AiConsent(val startDestination: Destination) : Screen
+
+    /**
+     * The Phase 2 application shell (docs/RELEASE_PLAN.md), reached once the
+     * account/consent flow above completes.
      */
     data class MainApp(val startDestination: Destination = Destination.Today) : Screen
 

@@ -30,15 +30,13 @@ kotlin {
         commonMain.dependencies {
             api(project(":shared:core"))
             api(project(":shared:design_system"))
-            api(project(":shared:authentication"))
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
-            implementation(libs.androidx.navigation.compose)
-            implementation(libs.compose.ui.backhandler)
+            implementation(libs.kotlinx.coroutines.core)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -47,7 +45,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.retirewise.navigation"
+    namespace = "com.retirewise.authentication"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
