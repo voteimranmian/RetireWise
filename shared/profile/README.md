@@ -1,7 +1,7 @@
 # shared/profile
 
-Placeholder module. Not yet implemented.
+Real Gradle module (Kotlin Multiplatform: androidTarget + iosX64/iosArm64/iosSimulatorArm64), implemented in Phase 4 (Conversational onboarding), per docs/RELEASE_PLAN.md.
 
-Planned in: Phase 3-4 (Authentication/consent and Conversational onboarding), per docs/RELEASE_PLAN.md.
+Domain-only `Profile`/`RetirementGoal`/`ProfileRepository` — no UI. Backed by `InMemoryProfileRepository` (state not persisted across app restarts; no backend exists yet). Consumed by `shared/onboarding` and `shared/retirement_engine`.
 
-This directory is intentionally not wired into settings.gradle.kts yet. It will become a real Gradle module (with domain, data, presentation, di, test per docs/ARCHITECTURE.md section 15) when that phase of work begins.
+See docs/RELEASE_PLAN.md's Phase 4 entry for current status and known limitations.

@@ -79,31 +79,39 @@ Design system v2 visual refresh (finalized colour tokens, Inter typeface, Materi
 
 **Exit criteria:** A user can complete the initial assessment and receive a placeholder readiness result. Met, with the in-memory storage caveat above.
 
-## Phase 5: Retirement engine
+## Phase 5: Retirement engine — DONE (deterministic engine; see below)
 
-1. Create financial value objects
-2. Create assumptions
-3. Create annual projection model
-4. Implement contributions
-5. Implement growth
-6. Implement inflation
-7. Implement retirement expenses
-8. Implement income sources
-9. Implement account withdrawals
-10. Add golden test cases
+1. Create financial value objects — DONE (`Money`, fixed-point; `Rate`, `Double`-backed — docs/ADR/0006-money-and-decimal-representation-for-retirement-engine.md)
+2. Create assumptions — DONE (`Assumptions`; no default/baked-in rates — see caveats below)
+3. Create annual projection model — DONE (`AnnualProjectionEntry`, `VersionedProjection`, `CalculationMetadata`)
+4. Implement contributions — DONE
+5. Implement growth — DONE
+6. Implement inflation — DONE
+7. Implement retirement expenses — DONE
+8. Implement income sources — DONE (employment, pension, other; explicitly excludes CPP/OAS/GIS, which is Phase 6)
+9. Implement account withdrawals — DONE (sequential: non-registered → RRSP/RRIF → TFSA; clamped at zero, reports unmet shortfall)
+10. Add golden test cases — DONE (3 of 10; see caveat below)
 
-**Exit criteria:** The deterministic engine can generate a versioned annual projection.
+**Client-side scaffold (2026-07-27):** New domain-only Gradle module `shared/retirement_engine` (docs/ARCHITECTURE.md section 15) implements `project(request, calculationDate): VersionedProjection`, a pure function folding year-by-year from current age to `Assumptions.projectionEndAge` (default 100). `governmentBenefits`, `grossIncome`, `estimatedTaxes`, and `afterTaxIncome` are always `ProjectionValue.NotYetModeled` this phase — a partial "gross income" that silently excluded CPP/OAS would look misleadingly complete, so all four dependent fields are marked, not just government benefits (same honesty precedent as Phase 3/4's `AuthResult.NotConfigured`). Debt is carried flat from `Profile.expectedDebtAtRetirement` (no amortization curve — onboarding collects only a single point value). `CalculationMetadata` stamps `engineVersion`, `assumptionSetVersion`, `calculationDate`, `formulaIdentifiers`, and explicit `"NOT_IMPLEMENTED"` sentinels for `taxRuleVersion`/`governmentBenefitRuleVersion`.
 
-## Phase 6: Government benefits
+**Known limitations:** No default `Assumptions` factory — callers must supply explicit, sourced rates (no approved default assumption set exists yet). Golden households (docs/TEST_STRATEGY.md section 24.2): only #1 (single employee, no pension), #3 (defined benefit pension), and #9 (early retirement at 55) were implemented this phase — #7 and #10 followed once Phase 6 landed; #2, #5, #6, #8 need couples modeling, real mortgage amortization, or a tax engine (all Release two / future phases), and #4 (self-employed) is a cheap future follow-up. Property-based invariants (section 24.3) use a hand-rolled seeded `kotlin.random.Random` sampler rather than a new test dependency. No consumer (UI/persistence) exists yet — this phase is domain-only.
 
-1. Implement CPP rule interface
-2. Implement OAS rule interface
-3. Implement GIS rule interface
-4. Add versioned rule repository
-5. Add official source metadata
-6. Add benefit tests
+**Exit criteria:** The deterministic engine can generate a versioned annual projection. Met.
 
-**Exit criteria:** The engine can produce sourced and versioned government benefit estimates.
+## Phase 6: Government benefits — DONE (statutory timing adjustment on user-supplied estimates; see below)
+
+1. Implement CPP rule interface — DONE (`cppAdjustedAnnualAmount`; actuarial adjustment only, not earnings-history calculation — see caveat below)
+2. Implement OAS rule interface — DONE (`oasAdjustedAnnualAmount`; deferral-only, no early-start option, matching reality)
+3. Implement GIS rule interface — DONE (`gisAnnualAmount`; linear approximation of the real piecewise-banded table — see caveat below)
+4. Add versioned rule repository — DONE (`BenefitRuleRepository` interface + `CanadaBenefitRuleRepositoryV1`, `ruleVersion = "CANADA_BENEFITS_V1"`)
+5. Add official source metadata — DONE (`BenefitRuleSet.sourceDescription`/`sourceVerifiedDate`; see sourcing caveat below)
+6. Add benefit tests — DONE (formula unit tests, rule repository sanity tests, 2 new golden households, 1 new property invariant)
+
+**Client-side scaffold (2026-07-27):** New domain-only Gradle module `shared/benefits_engine` (docs/ARCHITECTURE.md section 15), consumed by `shared/retirement_engine`. `Money`/`Rate` relocated from `shared/retirement_engine` to `shared/core` to avoid a circular module dependency (docs/ADR/0007-government-benefit-scope-and-sourcing-for-phase-6.md). `RetirementProjectionEngine.project()` gains a defaulted `benefitRuleRepository` parameter; `AnnualProjectionEntry.governmentBenefits` becomes `ProjectionValue.Known` once at least one of `Assumptions.estimatedCppAmountAtAge65`/`estimatedOasAmountAtAge65` is supplied, otherwise stays `NotYetModeled` (fully backward compatible with every Phase 5 caller).
+
+**Known limitations:** Does not compute CPP from a real earnings history or determine OAS/GIS eligibility from residency years — accepts a user-supplied age-65 estimate and applies only the statutory timing adjustment (Release two: full earnings/residency-based calculation). GIS uses a linear approximation between two published anchor points, not the real piecewise-banded reduction table. GIS's max amount and income cutoff are secondary-sourced (aggregator sites quoting canada.ca; direct canada.ca retrieval returned HTTP 403 in this environment) and are pending official re-verification before production use. Golden household #8 (high income OAS recovery tax) remains deferred — it requires a tax engine, not yet built.
+
+**Exit criteria:** The engine can produce sourced and versioned government benefit estimates. Met, with the scope and sourcing caveats above.
 
 ## Phase 7: Scenario planning
 

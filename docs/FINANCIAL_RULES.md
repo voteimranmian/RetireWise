@@ -66,6 +66,20 @@ Use decimal financial types. Do not use floating point values for currency. Defi
 
 Every calculation result must include: engine version, tax rule version, government benefit rule version, assumption set version, calculation date, formula identifiers used. This allows old reports to be reproduced and audited.
 
+### 11.6 Phase 5 status
+
+`shared/retirement_engine` implements section 11.1's annual projection for the inputs/scope available before Phase 6: employment income, employee/employer contributions, investment growth, inflation, retirement expenses, employer pension pass-through (optionally inflation-indexed), other retirement income, sequential account withdrawals (non-registered → RRSP/RRIF → TFSA, clamped at zero), and net worth/estate value. `engineVersion = "RETIREMENT_ENGINE_V1"` (docs/ADR/0006-money-and-decimal-representation-for-retirement-engine.md covers the `Money`/`Rate` types used throughout).
+
+**Explicitly out of scope this phase, modeled as `ProjectionValue.NotYetModeled` rather than fabricated:** CPP/OAS/GIS (`governmentBenefits` — Phase 6), income tax (`estimatedTaxes`), and the two fields that depend on them (`grossIncome`, `afterTaxIncome`). `taxRuleVersion` and `governmentBenefitRuleVersion` are stamped `"NOT_IMPLEMENTED"` rather than omitted or null. Provincial tax, couples planning, RRIF minimum withdrawals, and real mortgage amortization remain Release-two scope; debt is carried flat (no amortization curve) since onboarding collects only a single point value for `expectedDebtAtRetirement`.
+
+### 11.7 Phase 6 status
+
+CPP, OAS, and GIS are now modeled in the new `shared/benefits_engine` module (`docs/ADR/0007-government-benefit-scope-and-sourcing-for-phase-6.md`), with an explicit scope limit: the engine accepts a **user-supplied benefit estimate at age 65** (`Assumptions.estimatedCppAmountAtAge65`/`estimatedOasAmountAtAge65`) and applies only the statutory timing adjustment (early/late actuarial reduction or increase) on top of it. It does not compute CPP from a 40-year earnings history and does not determine OAS/GIS eligibility from residency years — neither is collected by onboarding, and fabricating either would violate rule 5. `governmentBenefits` becomes `ProjectionValue.Known` once either estimate is supplied; it stays `NotYetModeled` only when neither is. `governmentBenefitRuleVersion` is now always stamped from `BenefitRuleRepository.current().ruleVersion` (`"CANADA_BENEFITS_V1"`) rather than `"NOT_IMPLEMENTED"`.
+
+GIS uses a linear approximation between two published anchor points (max GIS at $0 non-OAS income; $0 GIS at the official income cutoff) rather than the real piecewise-banded reduction table — a documented MVP simplification. The GIS maximum annual amount and income cutoff are secondary-sourced (aggregator sites quoting canada.ca figures; direct canada.ca retrieval returned HTTP 403 in this environment) and are flagged in `BenefitRuleSet.sourceDescription` as pending official re-verification before production use. CPP's 0.6%/month early reduction, 0.7%/month late increase, and OAS's 0.6%/month deferral increase are long-standing, structural Service Canada rules, sourced with high confidence.
+
+Income tax, provincial tax, full CPP/OAS/GIS eligibility calculation, the real GIS reduction table, and OAS recovery tax remain out of scope until Release two or a future tax-engine phase.
+
 ## 12. Retirement Readiness Model
 
 Do not present a score as objective truth. Use a retirement readiness range supported by explainable factors:

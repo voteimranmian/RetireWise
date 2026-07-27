@@ -46,3 +46,15 @@ Authentication, profile synchronization, calculation API, scenario creation, AI 
 ## Phase 0 status
 
 Shared module unit test source sets are configured with `kotlin.test`, with one passing sample test as a smoke check. Golden financial test cases, property based tests, and AI evaluation suites are introduced alongside their respective engines/features per `RELEASE_PLAN.md`.
+
+## Phase 5 status
+
+`shared/retirement_engine` has unit tests for every formula function (`ContributionFormulasTest`, `GrowthFormulasTest`, `InflationFormulasTest`, `ExpenseFormulasTest`, `IncomeFormulasTest`, `WithdrawalFormulasTest`), covering normal case, retirement-age boundary, and depletion/clamp-at-zero. `MoneyTest`/`RateTest` moved to `shared/core` in Phase 6 alongside the `Money`/`Rate` value types themselves.
+
+## Phase 6 status
+
+`shared/benefits_engine` has unit tests for every formula function and rule source (`CppBenefitFormulasTest`, `OasBenefitFormulasTest`, `GisBenefitFormulasTest`, `BenefitRuleRepositoryTest`), covering the standard-age case, early/late adjustment, start-age clamping, and GIS's zero/cutoff/above-cutoff/midpoint boundaries.
+
+Golden households (24.2): **5 of 10 implemented** — #1 (single employee, no pension), #3 (defined benefit pension household), #9 (early retirement at 55), #7 (lower-income GIS-eligible retiree), and #10 (delayed CPP/OAS increases the benefit once started). Their expected CPP/OAS/GIS figures are computed by calling the same `benefits_engine` formula functions directly in the test (formula-level correctness is already covered by the dedicated unit tests above; the golden test's purpose is to verify `RetirementProjectionEngine` wiring, not re-derive floating-point rounding by hand). #2, #5, #6, #8 remain gaps pending couples modeling, real mortgage amortization, or a tax engine; #4 (self-employed) is flagged as a cheap follow-up once employment/business income sources exist.
+
+Property based invariants (24.3): implemented as a hand-rolled seeded `kotlin.random.Random` sampler (300 iterations, fixed seed) in `RetirementProjectionInvariantsTest` rather than adding a property-testing library — none exists in the version catalogue and a handful of fixed invariants don't justify the dependency. Maps directly to the listed invariants: increasing spending never improves final net worth; increasing contributions never reduces final net worth; delaying retirement never worsens final net worth (pension/other income held at zero for this comparison, since an indexed pension's amount depends on years-since-retirement and would confound the comparison); account balances never go negative; known income components reconcile with `savingsSurplusOrDeficit`; and, added in Phase 6, deferring CPP or OAS start age never decreases the adjusted annual benefit amount (monotonicity of the actuarial adjustment).
