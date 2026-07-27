@@ -11,6 +11,9 @@ import com.retirewise.authentication.presentation.CreateAccountScreen
 import com.retirewise.authentication.presentation.PrivacyConsentScreen
 import com.retirewise.designsystem.RetireWiseTheme
 import com.retirewise.navigation.di.appModule
+import com.retirewise.onboarding.di.onboardingModule
+import com.retirewise.onboarding.presentation.OnboardingFlow
+import com.retirewise.profile.di.profileModule
 import org.koin.compose.KoinApplication
 
 /**
@@ -22,7 +25,7 @@ import org.koin.compose.KoinApplication
  */
 @Composable
 fun App() {
-    KoinApplication(application = { modules(appModule, authenticationModule) }) {
+    KoinApplication(application = { modules(appModule, authenticationModule, profileModule, onboardingModule) }) {
         RetireWiseTheme {
             var currentScreen by remember { mutableStateOf<Screen>(Screen.Welcome) }
             val screen = currentScreen
@@ -55,10 +58,15 @@ fun App() {
                     MainAppScaffold(
                         startDestination = screen.startDestination,
                         onExitToWelcome = { currentScreen = Screen.Welcome },
+                        onBuildPlanClick = { currentScreen = Screen.Onboarding },
                     )
                 is Screen.DesignSystemShowcase ->
                     DesignSystemShowcaseScreen(
                         onBackClick = { currentScreen = Screen.Welcome },
+                    )
+                is Screen.Onboarding ->
+                    OnboardingFlow(
+                        onFinished = { currentScreen = Screen.MainApp(startDestination = Destination.Today) },
                     )
             }
         }

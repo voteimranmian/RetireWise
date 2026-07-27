@@ -21,7 +21,10 @@ import com.retirewise.designsystem.RetireWiseTheme
  * numbers, per CLAUDE.md rule 15 (handle empty states).
  */
 @Composable
-fun TodayScreen(modifier: Modifier = Modifier) {
+fun TodayScreen(
+    onBuildPlanClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier.fillMaxSize().padding(RetireWiseTheme.spacing.lg),
         verticalArrangement = Arrangement.Center,
@@ -33,6 +36,8 @@ fun TodayScreen(modifier: Modifier = Modifier) {
                 "Once you build your plan, you'll see your retirement readiness, " +
                     "projected income, and top actions here.",
             icon = Icons.Filled.CalendarToday,
+            actionLabel = "Build my plan",
+            onActionClick = onBuildPlanClick,
         )
     }
 }

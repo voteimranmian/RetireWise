@@ -65,17 +65,19 @@ Design system v2 visual refresh (finalized colour tokens, Inter typeface, Materi
 
 **Exit criteria:** A user can securely create, access, lock, export, and delete an account.
 
-## Phase 4: Conversational onboarding
+## Phase 4: Conversational onboarding — DONE (client-side scaffold; see below)
 
-1. Implement onboarding state machine
-2. Implement question cards
-3. Implement answer ranges
-4. Implement skip and explain actions
-5. Save draft progress
-6. Create initial profile
-7. Create initial retirement goal
+1. Implement onboarding state machine — DONE
+2. Implement question cards — DONE
+3. Implement answer ranges — DONE (validation functions exist in `shared/profile`; not yet wired to block "Next" beyond requiring a non-blank answer)
+4. Implement skip and explain actions — DONE
+5. Save draft progress — DONE (in-memory only; see below)
+6. Create initial profile — DONE
+7. Create initial retirement goal — DONE
 
-**Exit criteria:** A user can complete the initial assessment and receive a placeholder readiness result.
+**Client-side scaffold (2026-07-24):** Two new modules were added (docs/ARCHITECTURE.md section 15): `shared/profile` (domain-only `Profile`/`RetirementGoal`/`ProfileRepository`, no UI, reusable by the Phase 5 retirement engine) and `shared/onboarding` (the 12-question flow from docs/PRD.md section 9.1, reached via a new "Build my plan" action on Today's empty state). Answers are held in `OnboardingState` and saved after every question via `InMemoryOnboardingDraftRepository`; on completion the resulting `Profile`/`RetirementGoal` are saved via `InMemoryProfileRepository`. Both repositories are in-memory only — the same honest caveat as Phase 3's `InMemoryConsentRepository`, since no backend exists yet to persist them across app restarts. The completion screen (`OnboardingCompleteScreen`) echoes back only what the user entered; it does not compute or display any readiness percentage or projected dollar figures, since that requires the Phase 5 retirement engine.
+
+**Exit criteria:** A user can complete the initial assessment and receive a placeholder readiness result. Met, with the in-memory storage caveat above.
 
 ## Phase 5: Retirement engine
 

@@ -31,6 +31,7 @@ import androidx.navigation.compose.rememberNavController
 @Composable
 fun MainAppScaffold(
     onExitToWelcome: () -> Unit,
+    onBuildPlanClick: () -> Unit,
     startDestination: Destination = Destination.Today,
     modifier: Modifier = Modifier,
 ) {
@@ -64,6 +65,7 @@ fun MainAppScaffold(
                 DestinationNavHost(
                     navController = navController,
                     startDestination = startDestination,
+                    onBuildPlanClick = onBuildPlanClick,
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -72,6 +74,7 @@ fun MainAppScaffold(
                 DestinationNavHost(
                     navController = navController,
                     startDestination = startDestination,
+                    onBuildPlanClick = onBuildPlanClick,
                     modifier = Modifier.weight(1f),
                 )
                 DestinationNavigationBar(
@@ -87,6 +90,7 @@ fun MainAppScaffold(
 private fun DestinationNavHost(
     navController: NavHostController,
     startDestination: Destination,
+    onBuildPlanClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -94,7 +98,7 @@ private fun DestinationNavHost(
         startDestination = startDestination.route,
         modifier = modifier,
     ) {
-        composable(Destination.Today.route) { TodayScreen() }
+        composable(Destination.Today.route) { TodayScreen(onBuildPlanClick = onBuildPlanClick) }
         composable(Destination.Plan.route) { PlanScreen() }
         composable(Destination.Explore.route) { ExploreScreen() }
         composable(Destination.Learn.route) { LearnScreen() }

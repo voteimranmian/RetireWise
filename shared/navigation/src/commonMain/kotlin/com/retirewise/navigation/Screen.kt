@@ -37,4 +37,10 @@ sealed interface Screen {
      * surface exists.
      */
     data object DesignSystemShowcase : Screen
+
+    /**
+     * Phase 4 conversational onboarding (docs/PRD.md section 9.1), reached
+     * from the "Build my plan" action on [MainApp]'s Today destination.
+     */
+    data object Onboarding : Screen
 }

@@ -19,41 +19,33 @@ kotlin {
         iosSimulatorArm64(),
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "Shared"
+            baseName = "Onboarding"
             isStatic = true
-            export(project(":shared:core"))
-            export(project(":shared:design_system"))
         }
     }
 
     sourceSets {
         commonMain.dependencies {
             api(project(":shared:core"))
+            api(project(":shared:profile"))
             api(project(":shared:design_system"))
-            api(project(":shared:authentication"))
-            implementation(project(":shared:onboarding"))
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.ui)
-            // Same icon set as shared/design_system (see
-            // docs/ADR/0005-design-system-v2-tokens-typeface-icons.md) — the
-            // screens in this module reference Icons.Filled.* directly.
-            @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-            implementation(compose.materialIconsExtended)
+            implementation(libs.kotlinx.coroutines.core)
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
-            implementation(libs.androidx.navigation.compose)
-            implementation(libs.compose.ui.backhandler)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
+            implementation(libs.kotlinx.coroutines.core)
         }
     }
 }
 
 android {
-    namespace = "com.retirewise.navigation"
+    namespace = "com.retirewise.onboarding"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
