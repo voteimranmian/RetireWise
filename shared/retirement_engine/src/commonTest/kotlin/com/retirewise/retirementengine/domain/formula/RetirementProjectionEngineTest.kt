@@ -313,4 +313,42 @@ class RetirementProjectionEngineTest {
         assertTrue(expectedCpp > Money.ofDollars(10000.0))
         assertTrue(expectedOas > Money.ofDollars(9000.0))
     }
+
+    @Test
+    fun estimateSuppliedWithoutMatchingStartAgeIsTreatedAsKnownZeroNotNotYetModeled() {
+        // Pins down a documented edge case (docs/ADR/0007 risk #3): a caller
+        // that supplies an amount estimate but omits the matching start age
+        // gets that program's contribution treated as Known(zero) for every
+        // year, not NotYetModeled — the two fields are independently
+        // nullable and this engine does not enforce that they are set in
+        // pairs. Future callers (e.g. onboarding UI) must set both together.
+        val request =
+            ProjectionRequest.Ready(
+                currentAge = 63,
+                retirementAge = 65,
+                province = CanadianProvince.ONTARIO,
+                maritalStatus = MaritalStatus.SINGLE,
+                employmentIncome = Money.ofDollars(60000.0),
+                startingBalances = AccountBalances(rrspOrRrif = Money.ofDollars(200000.0)),
+                employeeAnnualContribution = Money.ofDollars(5000.0),
+                expectedDebtAtRetirement = Money.ZERO,
+                targetAnnualSpending = Money.ofDollars(25000.0),
+                assumptions =
+                    Assumptions(
+                        incomeGrowthRate = Rate.ZERO,
+                        expectedReturnRate = Rate.ofPercent(4.0),
+                        inflationRate = Rate.ofPercent(2.0),
+                        assumptionSetVersion = "GOLDEN_TEST_V1",
+                        projectionEndAge = 70,
+                        estimatedCppAmountAtAge65 = Money.ofDollars(8000.0),
+                        // cppStartAge intentionally omitted.
+                    ),
+            )
+
+        val projection = project(request, CALCULATION_DATE)
+
+        for (entry in projection.entries) {
+            assertEquals(ProjectionValue.Known(Money.ZERO), entry.governmentBenefits)
+        }
+    }
 }

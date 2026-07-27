@@ -9,6 +9,7 @@ import com.retirewise.retirementengine.domain.AccountBalances
 import com.retirewise.retirementengine.domain.Assumptions
 import com.retirewise.retirementengine.domain.MaritalStatus
 import com.retirewise.retirementengine.domain.ProjectionRequest
+import com.retirewise.retirementengine.domain.ProjectionValue
 import com.retirewise.retirementengine.domain.VersionedProjection
 import kotlinx.datetime.LocalDate
 import kotlin.random.Random
@@ -40,10 +41,18 @@ private fun randomRate(
  * invariant below compares two different [ProjectionRequest.Ready.retirementAge]
  * values, and an indexed pension's amount depends on years-since-retirement,
  * which would confound that comparison with an unrelated effect.
+ *
+ * CPP/OAS estimates and start ages are included for roughly half of the
+ * generated scenarios, so the reconciliation invariant below actually
+ * exercises the government-benefits path. This is safe alongside the other
+ * invariants: `cppStartAge`/`oasStartAge` are independent of
+ * [ProjectionRequest.Ready.retirementAge], so they stay identical between the
+ * two variants each of those invariants compares.
  */
 private fun randomBaseRequest(random: Random): ProjectionRequest.Ready {
     val currentAge = random.nextInt(30, 56)
     val retirementAge = random.nextInt(currentAge + 5, 81)
+    val includesGovernmentBenefits = random.nextBoolean()
     return ProjectionRequest.Ready(
         currentAge = currentAge,
         retirementAge = retirementAge,
@@ -61,6 +70,12 @@ private fun randomBaseRequest(random: Random): ProjectionRequest.Ready {
                 inflationRate = randomRate(random, 0.0, 4.0),
                 assumptionSetVersion = "PROPERTY_TEST_V1",
                 projectionEndAge = 92,
+                cppStartAge = if (includesGovernmentBenefits) random.nextInt(60, 71) else null,
+                oasStartAge = if (includesGovernmentBenefits) random.nextInt(65, 71) else null,
+                estimatedCppAmountAtAge65 =
+                    if (includesGovernmentBenefits) randomMoney(random, 1000.0, 20000.0) else null,
+                estimatedOasAmountAtAge65 =
+                    if (includesGovernmentBenefits) randomMoney(random, 1000.0, 15000.0) else null,
             ),
     )
 }
@@ -138,9 +153,10 @@ class RetirementProjectionInvariantsTest {
             val projection = project(randomBaseRequest(random), CALCULATION_DATE)
 
             for (entry in projection.entries) {
+                val governmentBenefits = (entry.governmentBenefits as? ProjectionValue.Known)?.amount ?: Money.ZERO
                 val expectedSurplus =
                     entry.employmentIncome + entry.pensionIncome + entry.otherIncome +
-                        entry.accountWithdrawals - entry.expenses
+                        governmentBenefits + entry.accountWithdrawals - entry.expenses
                 assertEquals(expectedSurplus, entry.savingsSurplusOrDeficit)
             }
         }

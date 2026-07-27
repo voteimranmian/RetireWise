@@ -32,6 +32,13 @@ data class Assumptions(
     // caller's own sourced age-65 estimate — this engine never invents a
     // CPP/OAS dollar figure — and only the statutory timing adjustment
     // (docs/ADR/0007) is computed from it.
+    //
+    // `estimatedCppAmountAtAge65`/`cppStartAge` (and the OAS equivalent) are
+    // independently nullable and not validated as a pair: supplying one
+    // without the other yields `Known(Money.ZERO)` for that program (not
+    // `NotYetModeled`), since it is indistinguishable at this layer from a
+    // deliberate "no benefit" input (docs/ADR/0007 risk #3). Callers must
+    // set both fields of a pair together.
     val cppStartAge: Int? = null,
     val oasStartAge: Int? = null,
     val estimatedCppAmountAtAge65: Money? = null,
