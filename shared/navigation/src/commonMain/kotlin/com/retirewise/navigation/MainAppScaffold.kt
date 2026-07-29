@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.retirewise.scenariocomparison.presentation.ScenarioComparisonScreen
 
 /**
  * The Phase 2 application shell: a [NavHost] hosting the five primary
@@ -100,8 +101,13 @@ private fun DestinationNavHost(
     ) {
         composable(Destination.Today.route) { TodayScreen(onBuildPlanClick = onBuildPlanClick) }
         composable(Destination.Plan.route) { PlanScreen() }
-        composable(Destination.Explore.route) { ExploreScreen() }
+        composable(Destination.Explore.route) {
+            ExploreScreen(onScenarioTypeClick = { navController.navigate("scenario_comparison") })
+        }
         composable(Destination.Learn.route) { LearnScreen() }
         composable(Destination.AskAi.route) { AskAiScreen() }
+        composable("scenario_comparison") {
+            ScenarioComparisonScreen(onBackClick = { navController.popBackStack() })
+        }
     }
 }
