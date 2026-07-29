@@ -80,6 +80,10 @@ GIS uses a linear approximation between two published anchor points (max GIS at 
 
 Income tax, provincial tax, full CPP/OAS/GIS eligibility calculation, the real GIS reduction table, and OAS recovery tax remain out of scope until Release two or a future tax-engine phase.
 
+### 11.8 Phase 7 status
+
+`shared/scenario_engine` applies a `ScenarioChangeSet` (retirement age, CPP/OAS start age, employee contribution, target spending) to a base `ProjectionRequest.Ready` and calls `project()` (section 11's engine) unmodified — no scenario-specific reimplementation of any retirement or benefit formula. Scenario comparison fields therefore inherit the same `NotYetModeled` status as section 11.6/11.7's tax-dependent fields: `monthlyAfterTaxIncomeAtRetirement` and `lifetimeTaxesPaid` stay `NotYetModeled` until a tax engine exists. See `docs/ADR/0008-scenario-planning-scope-and-comparison-metrics-for-phase-7.md`.
+
 ## 12. Retirement Readiness Model
 
 Do not present a score as objective truth. Use a retirement readiness range supported by explainable factors:

@@ -113,17 +113,21 @@ Design system v2 visual refresh (finalized colour tokens, Inter typeface, Materi
 
 **Exit criteria:** The engine can produce sourced and versioned government benefit estimates. Met, with the scope and sourcing caveats above.
 
-## Phase 7: Scenario planning
+## Phase 7: Scenario planning — DONE (comparison engine; see below)
 
-1. Create scenario model
-2. Clone base plan
-3. Apply scenario changes
-4. Run calculations
-5. Compare scenarios
-6. Display comparison cards
-7. Add natural language scenario preview
+1. Create scenario model — DONE (`Scenario`, `ScenarioChangeSet`, `ScenarioProjectionSummary`, `ScenarioNarrative`)
+2. Clone base plan — DONE (`cloneBasePlan`; identity — `ProjectionRequest.Ready` is already immutable)
+3. Apply scenario changes — DONE (`applyScenarioChange`)
+4. Run calculations — DONE (`runScenario`/`createAndRunScenario`, reusing `RetirementProjectionEngine.project()` unmodified)
+5. Compare scenarios — DONE (`compareScenarios`, max 3 per docs/PRD.md section 19.5)
+6. Display comparison cards — NOT STARTED (no UI consumer this phase; see caveat below)
+7. Add natural language scenario preview — DEFERRED (needs the Phase 8 AI advisor)
 
-**Exit criteria:** A user can compare three retirement scenarios.
+**Client-side scaffold (2026-07-27):** New domain-only Gradle module `shared/scenario_engine` (docs/ARCHITECTURE.md section 15), depending on `shared/core`, `shared/retirement_engine`, and `shared/benefits_engine`. Only 6 of docs/PRD.md section 8.3's 9 scenario types are supported this phase (retire earlier/delay retirement, delay CPP, delay OAS, increase savings, change retirement spending) — see docs/ADR/0008-scenario-planning-scope-and-comparison-metrics-for-phase-7.md.
+
+**Known limitations:** "Pay off mortgage," "downsize home," and "work part time" scenario types are deferred — they need debt-payoff/housing-equity/partial-income modeling that doesn't exist yet (Release two). `ScenarioProjectionSummary.monthlyAfterTaxIncomeAtRetirement`/`lifetimeTaxesPaid` are always `ProjectionValue.NotYetModeled` (no tax engine yet). `mainAdvantage`/`mainTradeoff`/`keyRisk` are always `ScenarioNarrative.NotYetGenerated` (needs the Phase 8 AI advisor). The natural-language scenario preview (item 7) is deferred to Phase 8 for the same reason. `shared/navigation`'s `ExploreScreen.kt` is left unwired this phase — no ViewModel or base-plan source exists yet to drive it. `PlanId` has no referential integrity (no persisted `Plan` entity exists to validate against).
+
+**Exit criteria:** A user can compare three retirement scenarios. Met at the engine level (items 1-5); UI wiring (item 6) and the natural-language preview (item 7) remain open, per the caveats above.
 
 ## Phase 8: AI advisor
 
